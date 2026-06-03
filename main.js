@@ -68,7 +68,7 @@ controls.maxDistance = 350; controls.minDistance = 25;
 const renderScene = new RenderPass(scene, camera);
 const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    2.0, 0.8, 0.1
+    0.8, 0.6, 0.2
 );
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene); composer.addPass(bloomPass);
