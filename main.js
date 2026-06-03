@@ -65,11 +65,14 @@ controls.autoRotate = true; controls.autoRotateSpeed = 0.2;
 controls.maxDistance = 350; controls.minDistance = 25;
 
 // Post-procesamiento Cinemático (Bloom/Glow)
-const renderScene = new RenderPass(scene, camera);
+// CÓDIGO NUEVO (Brillo suavizado):
 const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    2.0, 0.8, 0.1
+    0.8,  // Intensidad del brillo (Antes 2.0 - ¡Aquí está el truco!)
+    0.6,  // Radio del brillo (Un poco más cerrado para que no invada)
+    0.2   // Umbral/Threshold (Filtra qué tanto brilla el blanco puro)
 );
+
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene); composer.addPass(bloomPass);
 
