@@ -8,7 +8,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 document.getElementById('error-msg').style.display = 'none';
 
 // ==========================================
-// ⚙️ BASE DE DATOS EMOCIONAL (80 ELEMENTOS)
+// ⚙️ BASE DE DATOS EMOCIONAL PERSONALIZADA
 // ==========================================
 const emojisPosibles = ['❤️', '💕', '💖', '💗', '💓', '💞', '✨', '🌹', '🌸', '🫶', '💫', '♡', '🦋', '🌷', '🌟', '💌'];
 const paletaColores = ['#ffb3c6', '#ff809f', '#ffd1dc', '#ffffff', '#ff99b3'];
@@ -19,17 +19,17 @@ const frases = [
     "Tu forma única de ver el mundo", "La pasión que le pones a todo", "Tu gran empatía", "Tu creatividad sin límites", "Tu fuerza inquebrantable", 
     "Tu ternura al hablarme", "Tu paciencia conmigo", "El apoyo incondicional que me brindas", "La luz que irradias", "Tu energía positiva",
     "La suavidad de tus manos", "Tus caricias inesperadas", "Tu aroma que me encanta", "Tu forma de caminar", "Cómo me escuchas con atención", 
-    "Cómo me hablas al oído", "Cómo me haces sentir único", "Tu maravillosa compañía", "Tus silencios cómodos", "Tu respiración cuando duermes",
-    "Tus pequeños detalles", "Tus hermosas sorpresas", "Tu forma tan pura de amar", "Tu sinceridad total", "Tu honestidad valiente", 
+    "Cómo me hablas al oído", "Cómo me haces sentir único", "Tu maravillosa compañía", "Tus silencios cómodos", "Tu besos",
+    "Tus pequeños detalles", "Tus anecdotas", "Tu forma tan pura de amar", "Tu sinceridad total", "Tu honestidad valiente", 
     "Tu lealtad absoluta", "La confianza que me inspiras", "Tu valentía ante los retos", "Tu inmensa determinación", "Tu perseverancia",
     "Tu optimismo contagiante", "Tu esperanza en el futuro", "Tu fe en nosotros", "Tu alegría de vivir", "Tu entusiasmo por lo simple", 
-    "Tu curiosidad de niño/a", "Tu increíble imaginación", "Tu maravillosa espontaneidad", "Tu autenticidad", "Tu hermosa originalidad",
-    "Tus grandes metas", "Tus sueños más locos", "Tu forma de soñar despierto/a", "Tu forma de luchar por lo que quieres", "Tu resiliencia", 
+    "Tu curiosidad de niña", "Tu increíble imaginación", "Tu maravillosa espontaneidad", "Tu autenticidad", "Tu hermosa originalidad",
+    "Tus grandes metas", "Tus sueños más locos", "Tu forma de soñar despierta", "Tu forma de luchar por lo que quieres", "Tu resiliencia", 
     "Tu capacidad de perdonar", "Tu capacidad de aprender siempre", "Tu gran sabiduría", "Tu intención perfecta", "Tu hermosa sensibilidad",
-    "Cómo te emocionas por pequeñas cosas", "Tus gestos tan tuyos", "Tus divertidas manías", "Ese lunar que tanto me gusta", "Tu cabello", 
-    "Tu perfil perfecto", "Tu carita al dormir", "Tu forma de despertar", "Tu carita cuando comes algo rico", "Tu forma de jugar sin pena",
-    "Tus mensajes de buenos días", "Tus llamadas inesperadas", "Tus sabios consejos", "Tu forma de cuidarme", "Tu forma de protegerme", 
-    "Tu forma de animarme cuando caigo", "Tu forma de consolarme", "Tu facilidad para hacerme reír", "Tu capacidad de hacerme pensar", "Que seas exactamente tú"
+    "Cómo te emocionas por pequeñas cosas", "Tus gestos unicos", "Tus divertidas manías", "Esos labios pequeños y hermosos que tanto me gustan", "Tu cabello", 
+    "Tu perfil perfecto", "Tus ojitos hermosos", "Tus mensajes en las mañanas", "Tu carita cuando comes algo rico", "Tu forma de ser cuando estamos a solas",
+    "Tus mensajes de buenos días", "Tus caricias", "Tus sabios consejos", "Tu forma de cuidarme", "Tu forma de protegerme", 
+    "Tu forma de animarme", "Tu forma de hacerme ver que somos el mejor equipo", "Tu facilidad para hacerme reír", "Tu capacidad de hacerme pensar", "Que seas TU"
 ];
 
 const interactiveData = frases.map((frase, i) => {
@@ -38,7 +38,8 @@ const interactiveData = frases.map((frase, i) => {
         emoji: emojisPosibles[Math.floor(Math.random() * emojisPosibles.length)],
         color: paletaColores[Math.floor(Math.random() * paletaColores.length)],
         title: frase,
-        card: "Eres la pieza que le faltaba a mi universo. " + frase + " es algo que atesoro profundamente." 
+        // Tu dedicatoria espacial integrada a la perfección:
+        card: "En medio de tantas estrellas en el espacio, " + frase + " es lo que me hace mantener los pies en la tierra."
     };
 });
 
@@ -269,4 +270,4 @@ function animate() {
 }
 
 animate();
-  
+            
