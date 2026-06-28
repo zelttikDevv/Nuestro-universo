@@ -170,11 +170,17 @@ interactiveData.forEach((data, index) => {
     interactiveSprites.push(sprite);
 });
 
-// Interacción Raycaster (Mouse y Clicks)
+// Interacción con Pointer Events (funciona en mouse y touch)
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const crosshair = document.getElementById('crosshair');
 const cardModal = document.getElementById('message-card');
+
+// Variables para detectar tap vs drag
+let pointerDownPosition = { x: 0, y: 0 };
+let pointerDownTime = 0;
+const TAP_THRESHOLD = 10; // píxeles de movimiento máximo para considerar tap
+const TAP_TIME_THRESHOLD = 300; // milisegundos máximo para considerar tap
 
 // Función para procesar clicks/toques en sprites
 function handleSpriteInteraction() {
@@ -198,25 +204,36 @@ function handleSpriteInteraction() {
     }
 }
 
-// Soporte para mouse (desktop)
-window.addEventListener('mousemove', (event) => {
+// Pointer down - guardar posición inicial
+window.addEventListener('pointerdown', (event) => {
+    pointerDownPosition = { x: event.clientX, y: event.clientY };
+    pointerDownTime = Date.now();
+    
+    // Actualizar posición del mouse para el raycaster
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
-window.addEventListener('click', handleSpriteInteraction);
-
-// Soporte táctil para Safari iOS
-window.addEventListener('touchstart', (event) => {
-    if (event.touches.length > 0) {
-        const touch = event.touches[0];
-        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
-    }
+// Pointer move - actualizar posición del mouse
+window.addEventListener('pointermove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
-window.addEventListener('touchend', (event) => {
-    handleSpriteInteraction();
+// Pointer up - detectar si fue tap o drag
+window.addEventListener('pointerup', (event) => {
+    const deltaX = Math.abs(event.clientX - pointerDownPosition.x);
+    const deltaY = Math.abs(event.clientY - pointerDownPosition.y);
+    const deltaTime = Date.now() - pointerDownTime;
+    
+    // Solo procesar si fue un tap (poco movimiento y rápido)
+    if (deltaX < TAP_THRESHOLD && deltaY < TAP_THRESHOLD && deltaTime < TAP_TIME_THRESHOLD) {
+        // Actualizar posición final del mouse
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        
+        handleSpriteInteraction();
+    }
 });
 
 // Funciones para los botones
@@ -232,21 +249,11 @@ function handleClose() {
     cardModal.classList.remove('active');
 }
 
-// Botón EXPLORAR con soporte táctil
-const btnEnter = document.getElementById('btn-enter');
-btnEnter.addEventListener('click', handleEnter);
-btnEnter.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    handleEnter();
-});
+// Botón EXPLORAR
+document.getElementById('btn-enter').addEventListener('click', handleEnter);
 
-// Botón CERRAR con soporte táctil
-const btnClose = document.getElementById('btn-close');
-btnClose.addEventListener('click', handleClose);
-btnClose.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    handleClose();
-});
+// Botón CERRAR
+document.getElementById('btn-close').addEventListener('click', handleClose);
 
 // Animación de entrada fluida (Lerp en el bucle principal)
 let introAnimacion = false;
