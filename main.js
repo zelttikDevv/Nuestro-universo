@@ -38,7 +38,6 @@ const interactiveData = frases.map((frase, i) => {
         emoji: emojisPosibles[Math.floor(Math.random() * emojisPosibles.length)],
         color: paletaColores[Math.floor(Math.random() * paletaColores.length)],
         title: frase,
-        // Tu dedicatoria espacial integrada a la perfección:
         card: "En medio de tantas estrellas en el espacio, " + frase + " es lo que me hace mantener los pies en la tierra."
     };
 });
@@ -177,13 +176,10 @@ const mouse = new THREE.Vector2();
 const crosshair = document.getElementById('crosshair');
 const cardModal = document.getElementById('message-card');
 
-window.addEventListener('mousemove', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-});
-
-window.addEventListener('click', () => {
+// Función para procesar clicks/toques en sprites
+function handleSpriteInteraction() {
     if (cardModal.classList.contains('active')) return;
+    
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(interactiveSprites);
 
@@ -200,21 +196,60 @@ window.addEventListener('click', () => {
         document.getElementById('card-text').innerText = data.card;
         cardModal.classList.add('active');
     }
+}
+
+// Soporte para mouse (desktop)
+window.addEventListener('mousemove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
-document.getElementById('btn-close').addEventListener('click', () => cardModal.classList.remove('active'));
+window.addEventListener('click', handleSpriteInteraction);
 
-// Animación de entrada fluida (Lerp en el bucle principal)
-let introAnimacion = false;
+// Soporte táctil para Safari iOS
+window.addEventListener('touchstart', (event) => {
+    if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+    }
+});
 
-document.getElementById('btn-enter').addEventListener('click', () => {
+window.addEventListener('touchend', (event) => {
+    handleSpriteInteraction();
+});
+
+// Funciones para los botones
+function handleEnter() {
     const intro = document.getElementById('intro-screen'); 
     intro.style.opacity = 0;
     setTimeout(() => intro.style.display = 'none', 2500);
-    
     camera.position.z = targetZ + 100;
     introAnimacion = true;
+}
+
+function handleClose() {
+    cardModal.classList.remove('active');
+}
+
+// Botón EXPLORAR con soporte táctil
+const btnEnter = document.getElementById('btn-enter');
+btnEnter.addEventListener('click', handleEnter);
+btnEnter.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    handleEnter();
 });
+
+// Botón CERRAR con soporte táctil
+const btnClose = document.getElementById('btn-close');
+btnClose.addEventListener('click', handleClose);
+btnClose.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    handleClose();
+});
+
+// Animación de entrada fluida (Lerp en el bucle principal)
+let introAnimacion = false;
 
 // Redimensionamiento Responsivo
 window.addEventListener('resize', () => {
@@ -270,4 +305,3 @@ function animate() {
 }
 
 animate();
-    
