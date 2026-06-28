@@ -16,7 +16,7 @@
 }
 
 #canvas-container, canvas {
-    touch-action: none;
+    touch-action: pan-y;
 }
 
 body { 
@@ -201,4 +201,4 @@ body {
     background: rgba(255,255,255,1); 
     box-shadow: 0 0 15px var(--primary); 
     transform: translate(-50%, -50%) scale(2); 
-    }
+}
