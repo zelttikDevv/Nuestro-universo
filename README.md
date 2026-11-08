@@ -23,11 +23,15 @@ También se puede forzar por URL, sin tocar el código:
 - `?final=1` → activa el final
 - `?final=0` → desactiva el final y vuelve el universo original
 
-El botón **VOLVER A NUESTRO UNIVERSO** de la pantalla final recarga la
-página con `?final=0`, así que los recuerdos vuelven a aparecer: nada se
-borra, solo se esconden durante el final.
-
 El texto de la despedida se edita en `index.html`, en `#farewell-screen`.
+Está firmada como Alberto, el nombre con el que Cristal lo llamaba, e
+incluye la frase “Eventualmente todo lo que es para ti termina
+encontrándote...”, que marcó el inicio de la relación.
+
+La pantalla final ya no tiene botón de regreso: es un final, no una
+pausa. Para volver a ver el universo original hay que poner
+`FINALE_ENABLED = false` o abrir la página con `?final=0`. Nada se
+borra, los recuerdos solo se esconden durante el final.
 
 ### Ver esta rama en Vercel
 

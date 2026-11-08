@@ -40,7 +40,8 @@ function startFinale() {
     if (!finaleActive || finaleStarted) return;
     finaleStarted = true;
     // A partir de aquí los recuerdos dejan de orbitar y empiezan a caer.
-    // El botón "VOLVER A NUESTRO UNIVERSO" recarga con ?final=0 y todo vuelve.
+    // Para volver al universo original hay que poner FINALE_ENABLED = false
+    // o abrir la página con ?final=0. No hay botón de regreso en la pantalla final.
 }
 
 function showFarewell() {
@@ -301,15 +302,6 @@ document.getElementById('btn-enter').addEventListener('click', handleEnter);
 
 // Botón CERRAR
 document.getElementById('btn-close').addEventListener('click', handleClose);
-
-// Botón VOLVER (pantalla final): recarga el universo original, sin final.
-// No borra nada: las frases siguen en el código y vuelven a aparecer.
-const btnBack = document.getElementById('btn-back');
-if (btnBack) {
-    btnBack.addEventListener('click', () => {
-        window.location.href = window.location.pathname + '?final=0';
-    });
-}
 
 // Animación de entrada fluida (Lerp en el bucle principal)
 let introAnimacion = false;

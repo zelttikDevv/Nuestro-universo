@@ -260,22 +260,14 @@ body {
     color: var(--primary);
     margin-bottom: 36px;
 }
-#btn-back {
-    padding: 12px 36px;
-    font-size: 0.85rem;
+#farewell-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
     font-weight: 300;
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid rgba(255, 179, 198, 0.4);
-    border-radius: 50px;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 3px;
-    transition: all 0.5s ease;
-}
-#btn-back:hover {
-    background: rgba(255, 179, 198, 0.1);
-    border-color: var(--primary);
-    box-shadow: var(--text-glow);
-    transform: scale(1.05);
+    font-size: 1.5rem;
+    line-height: 1.5;
+    max-width: 620px;
+    color: rgba(255, 209, 220, 0.95);
+    margin-bottom: 28px;
+    text-shadow: 0 0 20px rgba(255, 179, 198, 0.35);
 }
