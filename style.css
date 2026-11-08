@@ -210,10 +210,13 @@ body {
 }
 
 /* Pantalla final — Despedida (solo se muestra al final del agujero negro)
-   Antes el mensaje no se podía leer en pantallas chicas: el body tiene
-   overflow:hidden y esta pantalla era 100vh centrada, sin scroll, así que
-   el texto largo se cortaba arriba y abajo. Ahora la pantalla misma hace
-   scroll vertical, en mouse y en touch. */
+   Por qué no hacía scroll antes: el body tiene overflow:hidden y esta
+   pantalla era un flex centrado de 100vh. Con flex centrado, el contenido
+   que se pasa de alto se corta arriba y no se puede subir a verlo.
+   Ahora el contenedor exterior es un bloque con scroll propio, y el
+   centrado lo hace un wrapper interior con min-height:100%. Así, si el
+   texto cabe queda centrado, y si no cabe se puede bajar con el dedo o
+   con la rueda del mouse hasta el final. */
 #farewell-screen {
     position: absolute;
     top: 0;
@@ -222,14 +225,10 @@ body {
     height: 100vh;
     height: 100dvh;
     background: radial-gradient(circle at center, rgba(10,5,10,0.85) 0%, rgba(0,0,0,1) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+    display: block;
     text-align: center;
     padding: 48px 24px;
+    box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -240,9 +239,15 @@ body {
     pointer-events: none;
     transition: opacity 3s ease;
 }
-/* Centra el contenido cuando cabe, y deja que empiece arriba cuando no cabe (para poder hacer scroll). */
-#farewell-screen > :first-child { margin-top: auto; }
-#farewell-screen > :last-child { margin-bottom: auto; }
+.farewell-inner {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 620px;
+    margin: 0 auto;
+}
 #farewell-screen, #farewell-text, #farewell-quote {
     -webkit-user-select: text;
     user-select: text;
