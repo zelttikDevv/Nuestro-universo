@@ -116,6 +116,12 @@ body {
     transform: translate(-50%, -40%) scale(0.95);
     width: 85%; 
     max-width: 450px; 
+    max-height: 88vh;
+    max-height: 88dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     padding: 50px 40px; 
     text-align: center;
     background: linear-gradient(135deg, rgba(25, 10, 15, 0.7) 0%, rgba(10, 5, 10, 0.9) 100%);
@@ -203,26 +209,43 @@ body {
     transform: translate(-50%, -50%) scale(2); 
 }
 
-/* Pantalla final — Despedida (solo se muestra al final del agujero negro) */
+/* Pantalla final — Despedida (solo se muestra al final del agujero negro)
+   Antes el mensaje no se podía leer en pantallas chicas: el body tiene
+   overflow:hidden y esta pantalla era 100vh centrada, sin scroll, así que
+   el texto largo se cortaba arriba y abajo. Ahora la pantalla misma hace
+   scroll vertical, en mouse y en touch. */
 #farewell-screen {
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background: radial-gradient(circle at center, rgba(10,5,10,0.85) 0%, rgba(0,0,0,1) 100%);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
-    padding: 40px 24px;
+    padding: 48px 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
     z-index: 90;
     opacity: 0;
     pointer-events: none;
     transition: opacity 3s ease;
+}
+/* Centra el contenido cuando cabe, y deja que empiece arriba cuando no cabe (para poder hacer scroll). */
+#farewell-screen > :first-child { margin-top: auto; }
+#farewell-screen > :last-child { margin-bottom: auto; }
+#farewell-screen, #farewell-text, #farewell-quote {
+    -webkit-user-select: text;
+    user-select: text;
 }
 #farewell-screen.active {
     opacity: 1;
@@ -270,4 +293,15 @@ body {
     color: rgba(255, 209, 220, 0.95);
     margin-bottom: 28px;
     text-shadow: 0 0 20px rgba(255, 179, 198, 0.35);
+}
+
+/* Pantallas chicas: letra más compacta para que el mensaje se lea sin tanto scroll. */
+@media (max-width: 600px) {
+    #farewell-screen { padding: 32px 20px; }
+    #farewell-title { font-size: 2rem; letter-spacing: 2px; margin-bottom: 18px; }
+    #farewell-quote { font-size: 1.2rem; margin-bottom: 20px; }
+    #farewell-text { font-size: 1.15rem; line-height: 1.6; margin-bottom: 18px; }
+    #farewell-icon { font-size: 2rem; margin-bottom: 14px; }
+    #message-card { padding: 32px 24px; }
+    #card-text { font-size: 1.4rem; }
 }
