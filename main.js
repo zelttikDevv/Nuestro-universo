@@ -8,6 +8,50 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 document.getElementById('error-msg').style.display = 'none';
 
 // ==========================================
+// 🖤 INTERRUPTOR DEL FINAL — AGUJERO NEGRO
+// ==========================================
+// Este es el único interruptor que hay que tocar.
+//
+//   FINALE_ENABLED = true   -> al entrar a EXPLORAR, el agujero negro
+//                              se come todos los recuerdos (las frases)
+//                              y al final aparece la despedida a Cristal.
+//   FINALE_ENABLED = false  -> el universo queda exactamente como
+//                              estaba en el código original, sin final.
+//
+// El código original NO se borró: las frases, las estrellas y el
+// agujero negro siguen intactos. Con false, nada de esto se ejecuta.
+//
+// También se puede forzar por URL, sin tocar el código:
+//   ?final=1  -> activa el final
+//   ?final=0  -> desactiva el final y vuelve el universo original
+// ==========================================
+const FINALE_ENABLED = true;
+const FINALE_DELAY_MS = 5000; // espera tras pulsar EXPLORAR, antes de que empiece a consumir
+const FINALE_BLACK_HOLE_RADIUS = 13.5; // los recuerdos desaparecen al llegar a esta distancia del centro
+
+const _finaleParam = new URLSearchParams(window.location.search).get('final');
+const finaleActive = _finaleParam === '1' ? true : _finaleParam === '0' ? false : FINALE_ENABLED;
+
+let finaleStarted = false;
+let finaleFinished = false;
+let farewellTimerSet = false;
+
+function startFinale() {
+    if (!finaleActive || finaleStarted) return;
+    finaleStarted = true;
+    // A partir de aquí los recuerdos dejan de orbitar y empiezan a caer.
+    // El botón "VOLVER A NUESTRO UNIVERSO" recarga con ?final=0 y todo vuelve.
+}
+
+function showFarewell() {
+    if (finaleFinished) return;
+    finaleFinished = true;
+    controls.autoRotate = false;
+    const farewell = document.getElementById('farewell-screen');
+    if (farewell) farewell.classList.add('active');
+}
+
+// ==========================================
 // ⚙️ BASE DE DATOS EMOCIONAL PERSONALIZADA
 // ==========================================
 const emojisPosibles = ['❤️', '💕', '💖', '💗', '💓', '💞', '✨', '🌹', '🌸', '🫶', '💫', '♡', '🦋', '🌷', '🌟', '💌'];
@@ -184,10 +228,11 @@ const TAP_TIME_THRESHOLD = 300; // milisegundos máximo para considerar tap
 
 // Función para procesar clicks/toques en sprites
 function handleSpriteInteraction() {
+    if (finaleStarted) return; // durante el final ya no se pueden abrir recuerdos
     if (cardModal.classList.contains('active')) return;
     
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(interactiveSprites);
+    const intersects = raycaster.intersectObjects(interactiveSprites.filter((s) => s.visible));
 
     if (intersects.length > 0) {
         const sprite = intersects[0].object;
@@ -243,6 +288,8 @@ function handleEnter() {
     setTimeout(() => intro.style.display = 'none', 2500);
     camera.position.z = targetZ + 100;
     introAnimacion = true;
+    // Si el interruptor está en true, el final empieza unos segundos después de entrar.
+    if (finaleActive) setTimeout(startFinale, FINALE_DELAY_MS);
 }
 
 function handleClose() {
@@ -254,6 +301,15 @@ document.getElementById('btn-enter').addEventListener('click', handleEnter);
 
 // Botón CERRAR
 document.getElementById('btn-close').addEventListener('click', handleClose);
+
+// Botón VOLVER (pantalla final): recarga el universo original, sin final.
+// No borra nada: las frases siguen en el código y vuelven a aparecer.
+const btnBack = document.getElementById('btn-back');
+if (btnBack) {
+    btnBack.addEventListener('click', () => {
+        window.location.href = window.location.pathname + '?final=0';
+    });
+}
 
 // Animación de entrada fluida (Lerp en el bucle principal)
 let introAnimacion = false;
@@ -286,20 +342,55 @@ function animate() {
     stars.rotation.y = elapsedTime * 0.005;
 
     // Movimientos de flotación orbital e individual de los hologramas
-    interactiveSprites.forEach((sprite) => {
-        const ud = sprite.userData;
-        ud.angle += ud.speed;
-        sprite.position.x = Math.cos(ud.angle) * ud.distance;
-        sprite.position.z = Math.sin(ud.angle) * ud.distance;
-        sprite.position.y = ud.baseY + Math.sin(elapsedTime * ud.bobSpeed + ud.angle) * 3;
-        
-        const pulse = ud.originalScale + Math.sin(elapsedTime * 3 + ud.angle) * 1.5;
-        if(sprite.scale.x < 20) sprite.scale.set(pulse, pulse, 1);
-    });
+    // Si el final está activo, los recuerdos dejan de orbitar y caen en espiral al agujero negro.
+    if (finaleStarted && !finaleFinished) {
+        let remaining = 0;
+        interactiveSprites.forEach((sprite) => {
+            if (!sprite.visible) return;
+            const ud = sprite.userData;
+            // Espiral hacia adentro: cada vez más rápido y más cerca del centro.
+            ud.speed = Math.min(ud.speed + 0.00035, 0.03);
+            ud.angle += ud.speed;
+            ud.distance *= 0.994;
+            ud.baseY *= 0.99;
+            sprite.position.x = Math.cos(ud.angle) * ud.distance;
+            sprite.position.z = Math.sin(ud.angle) * ud.distance;
+            sprite.position.y = ud.baseY + Math.sin(elapsedTime * ud.bobSpeed + ud.angle) * 3 * (ud.distance / 100);
+            // Se encoge y se apaga mientras cae.
+            const shrink = Math.max(0.5, ud.originalScale * (ud.distance / 90));
+            sprite.scale.set(shrink, shrink, 1);
+            if (sprite.material) sprite.material.opacity = Math.max(0, Math.min(1, ud.distance / 45));
+            if (ud.distance <= FINALE_BLACK_HOLE_RADIUS) {
+                sprite.visible = false;
+                if (sprite.material) sprite.material.opacity = 0;
+            } else {
+                remaining++;
+            }
+        });
+        // Las estrellas también se van apagando con el universo.
+        if (starMat) starMat.opacity = Math.max(0.08, Math.min(1, remaining / interactiveSprites.length));
+        // El disco de acreción brilla un poco más mientras consume.
+        accretionDisk.scale.setScalar(1 + (1 - remaining / interactiveSprites.length) * 0.25);
+        if (remaining === 0 && !farewellTimerSet) {
+            farewellTimerSet = true;
+            setTimeout(showFarewell, 1200);
+        }
+    } else if (!finaleFinished) {
+        interactiveSprites.forEach((sprite) => {
+            const ud = sprite.userData;
+            ud.angle += ud.speed;
+            sprite.position.x = Math.cos(ud.angle) * ud.distance;
+            sprite.position.z = Math.sin(ud.angle) * ud.distance;
+            sprite.position.y = ud.baseY + Math.sin(elapsedTime * ud.bobSpeed + ud.angle) * 3;
+            
+            const pulse = ud.originalScale + Math.sin(elapsedTime * 3 + ud.angle) * 1.5;
+            if(sprite.scale.x < 20) sprite.scale.set(pulse, pulse, 1);
+        });
+    }
 
     // Lógica continua del cursor y Crosshair activo
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(interactiveSprites);
+    const intersects = finaleStarted ? [] : raycaster.intersectObjects(interactiveSprites.filter((s) => s.visible));
     if(intersects.length > 0) {
         crosshair.classList.add('active'); 
         document.body.style.cursor = 'pointer';

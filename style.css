@@ -202,3 +202,80 @@ body {
     box-shadow: 0 0 15px var(--primary); 
     transform: translate(-50%, -50%) scale(2); 
 }
+
+/* Pantalla final — Despedida (solo se muestra al final del agujero negro) */
+#farewell-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, rgba(10,5,10,0.85) 0%, rgba(0,0,0,1) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 24px;
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 3s ease;
+}
+#farewell-screen.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+#farewell-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.4));
+}
+#farewell-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 2.8rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+    margin-bottom: 24px;
+    text-shadow: var(--text-glow);
+}
+#farewell-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.4rem;
+    line-height: 1.7;
+    max-width: 620px;
+    color: rgba(255,255,255,0.92);
+    margin-bottom: 24px;
+}
+#farewell-sign {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--primary);
+    margin-bottom: 36px;
+}
+#btn-back {
+    padding: 12px 36px;
+    font-size: 0.85rem;
+    font-weight: 300;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(255, 179, 198, 0.4);
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 3px;
+    transition: all 0.5s ease;
+}
+#btn-back:hover {
+    background: rgba(255, 179, 198, 0.1);
+    border-color: var(--primary);
+    box-shadow: var(--text-glow);
+    transform: scale(1.05);
+}
